@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.lazee.database.AppDatabase
 import com.example.lazee.fragments.ConfigPage
 import com.example.lazee.fragments.MainPage
 import com.example.lazee.fragments.SettingsPage
@@ -29,14 +30,15 @@ import com.example.lazee.fragments.SettingsPage
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = Screen.Main.route
+    startDestination: String = Screen.Main.route,
+    database: AppDatabase
 ) {
     NavHost(
         modifier = modifier,
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(Screen.Main.route) { MainPage(navController) }
+        composable(Screen.Main.route) { MainPage(navController, database) }
         composable(Screen.Config.route) { ConfigPage(navController) }
         composable(Screen.Settings.route) { SettingsPage(navController) }
     }
@@ -68,7 +70,8 @@ fun NavBar(
                     }
                     selectedItem = index
                 },
-                label = { Text(text = screen.route) })
+//                label = { Text(text = screen.route) }
+            )
         }
     }
 }
