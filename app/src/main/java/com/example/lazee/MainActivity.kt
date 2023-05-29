@@ -5,6 +5,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -17,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.example.lazee.database.AppDatabase
 import com.example.lazee.receivers.BootReceiver
+import com.example.lazee.receivers.ShutdownReceiver
 import com.example.lazee.ui.theme.LazeeTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,9 +28,9 @@ class MainActivity : ComponentActivity() {
 
         val db = Room.databaseBuilder(applicationContext,AppDatabase::class.java,"app-database").build()
 
-        val br = BootReceiver()
+        val br = ShutdownReceiver()
         val filter = IntentFilter(Intent.ACTION_SCREEN_OFF)
-        ContextCompat.registerReceiver(this, br, filter, ContextCompat.RECEIVER_EXPORTED)
+//        ContextCompat.registerReceiver(this, br, filter, ContextCompat.RECEIVER_EXPORTED)
 
         setContent {
             val navController = rememberNavController()
@@ -36,7 +38,8 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = {
                         NavBar(navController = navController)
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 ) { innerPadding ->
                     AppNavHost(
                         navController = navController,

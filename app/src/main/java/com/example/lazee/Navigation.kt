@@ -1,6 +1,7 @@
 package com.example.lazee
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Home
@@ -16,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -34,9 +36,9 @@ fun AppNavHost(
     database: AppDatabase
 ) {
     NavHost(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
     ) {
         composable(Screen.Main.route) { MainPage(navController, database) }
         composable(Screen.Config.route) { ConfigPage(navController) }
@@ -51,10 +53,11 @@ fun NavBar(
 ) {
     val items = listOf(
         Screen.Main,
-        Screen.Config,
+//        Screen.Config,
         Screen.Settings
     )
     var selectedItem by remember { mutableStateOf(0) }
+    val context= LocalContext.current
     NavigationBar(modifier = modifier) {
         items.forEachIndexed { index, screen ->
             NavigationBarItem(
@@ -70,7 +73,7 @@ fun NavBar(
                     }
                     selectedItem = index
                 },
-//                label = { Text(text = screen.route) }
+                label = { Text(text = context.resources.getString(screen.resourceId)) }
             )
         }
     }
