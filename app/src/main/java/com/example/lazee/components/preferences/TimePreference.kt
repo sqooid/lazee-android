@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,25 +23,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
+import com.example.lazee.components.TimePickerDialog
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SwitchPreference(
+fun TimePreference(
     title: String,
     subtitle: String = "",
-    initialValue: Boolean = false,
-    onChange: (value: Boolean) -> Unit = {},
+    initialValue: Time = Time(0, 0),
+    onChange: (value: Time) -> Unit = {},
     disabled: Boolean = false
 ) {
     val interactionSource = remember {
         MutableInteractionSource()
     }
-    var value by remember {
-        mutableStateOf(initialValue)
+
+    var showTimePicker by remember { mutableStateOf(false) }
+    val state = rememberTimePickerState(
+        initialHour = initialValue.hour,
+        initialMinute = initialValue.minute
+    )
+
+    val onClick = {
+        showTimePicker = true
     }
 
-    val onCheck = {
-        value = !value
-        onChange(value)
+    if (showTimePicker) {
+        TimePickerDialog(onCancel = { showTimePicker = false }, onConfirm = {
+            showTimePicker = false
+            onChange(Time(state.hour, state.minute))
+        }) {
+            TimePicker(state = state)
+        }
     }
 
     Row(
@@ -50,7 +65,7 @@ fun SwitchPreference(
                 enabled = !disabled,
                 indication = LocalIndication.current,
                 interactionSource = interactionSource,
-                onClick = onCheck
+                onClick = onClick
             )
             .padding(PaddingValues(horizontal = 32.dp, vertical = 16.dp))
             .alpha(
@@ -76,11 +91,6 @@ fun SwitchPreference(
                     modifier = Modifier.alpha(0.5f)
                 )
         }
-        Switch(
-            checked = value,
-            onCheckedChange = { _ -> onCheck() },
-            interactionSource = interactionSource,
-            enabled = !disabled
-        )
+        Text(text = Time(state.hour, state.minute).to12HourString())
     }
 }
